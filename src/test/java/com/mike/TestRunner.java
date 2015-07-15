@@ -1,27 +1,18 @@
 package com.mike;
 
-import java.io.IOException;
-
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.plugin.analysis.icu.AnalysisICUPlugin;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.elasticsearch.test.ElasticsearchIntegrationTest.ClusterScope;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
 import com.carrotsearch.randomizedtesting.RandomizedContext;
-import com.carrotsearch.randomizedtesting.annotations.Seed;
-import com.carrotsearch.randomizedtesting.annotations.ThreadLeakFilters;
 
-@ClusterScope(scope=ElasticsearchIntegrationTest.Scope.SUITE, numClientNodes = 1, numDataNodes = 1, transportClientRatio = 0)
-@ThreadLeakFilters(defaultFilters = true, filters = {TestRunnerThreadsFilter.class})
-//@Seed("635FC3A3BF78BA08:9E3727237FC39C12")  // fails
-@Seed("1C45D45252C1042C")  // pass
+@ClusterScope(scope=ElasticsearchIntegrationTest.Scope.SUITE, numClientNodes = 1, numDataNodes = 1, transportClientRatio = 0, randomDynamicTemplates = false)
+//@ThreadLeakFilters(defaultFilters = true, filters = {TestRunnerThreadsFilter.class})
 public class TestRunner extends ElasticsearchIntegrationTest {
 
 	// protected so that it is inherited by sub test classes
@@ -71,17 +62,9 @@ public class TestRunner extends ElasticsearchIntegrationTest {
 		return settings;
 	}
 
-	@BeforeClass
-	public static synchronized void setupTestEnvironment() throws Exception {
-		beforeClass();
-	}
-
-	@AfterClass
-	public static synchronized void cleanupTestEnvironment() {
-	}
-
 	@Before
-	public void setup() throws IOException {
+	public void setup() throws Exception {
+		before();
 
 		System.out.println("MIKE SEED: " + RandomizedContext.current().getRunnerSeedAsString());
 
@@ -92,8 +75,4 @@ public class TestRunner extends ElasticsearchIntegrationTest {
 		IndexManager.setClient(cluster().client(), DEFAULT_INDEX);
 	}
 	
-	@After
-	public void cleanup() {
-	}
-
 }
